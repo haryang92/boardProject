@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.Board.domain.post.PostMapper">
+
+    <!-- tb_post 테이블 전체 컬럼 // 중복제거로 인하여 작성(INSERT, SELECT 위주 사용) -->
+    <sql id="postColumns">
+        id
+        , title
+        , content
+        , writer
+        , view_cnt
+        , notice_yn
+        , delete_yn
+        , created_date
+        , modified_date
+    </sql>
+
+
+    <!-- 게시글 저장 -->
+    <insert id="save" parameterType="com.example.Board.domain.post.PostRequest">
+        INSERT INTO board (
+        <include refid="postColumns" />
+        ) VALUES (
+        #{id}
+        , #{title}
+        , #{content}
+        , #{writer}
+        , 0
+        , #{noticeYn}
+        , 0
+        , NOW()
+        , NULL
+        )
+    </insert>
+
+
+    <!-- 게시글 상세정보 조회 -->
+    <select id="findById" parameterType="long" resultType="com.example.Board.domain.post.PostResponse">
+        SELECT
+        <include refid="postColumns" />
+        FROM
+        board
+        WHERE
+        id = #{value}
+    </select>
+
+
+    <!-- 게시글 수정 -->
+    <update id="update" parameterType="com.example.Board.domain.post.PostRequest">
+        UPDATE board
+        SET
+            modified_date = NOW()
+            , title = #{title}
+            , content = #{content}
+            , writer = #{writer}
+            , notice_yn = #{noticeYn}
+        WHERE
+            id = #{id}
+    </update>
+
+
+    <!-- 게시글 삭제 -->
+    <delete id="deleteById" parameterType="long">
+        UPDATE board
+        SET
+            delete_yn = 1
+        WHERE
+            id = #{id}
+    </delete>
+
+
+    <!-- 게시글 리스트 조회 -->
+    <select id="findAll" resultType="com.example.Board.domain.post.PostResponse">
+        SELECT
+        <include refid="postColumns" />
+        FROM
+        board
+        WHERE
+        delete_yn = 0
+        ORDER BY
+        id DESC
+    </select>
+<!--
+    1. <mapper> 태그
+
+    앞에서 XML Mapper는 SQL 쿼리를 작성(선언)하는 파일이라는 말씀을 드렸습니다. XML Mapper는
+    <mapper>로 시작해서 </mapper>로 끝나며, <mapper> 태그의 namespace 속성에 Mapper 인터페이스
+    경로를 선언해 주면 XML Mapper와 Mapper 인터페이스가 연결됩니다.
+
+
+    Mapper 인터페이스는 XML Mapper에 선언된 SQL 쿼리 중에서, 인터페이스에 선언된 메서드명과 동일한
+    id를 가진 SQL 쿼리를 찾아 실행한다는 것을 꼭! 기억해 주셔야 합니다.
+
+    2. <sql> 태그와 <include> 태그
+
+    MyBatis는 <sql> 태그와 <include> 태그를 이용해서 공통으로 사용되거나 반복적으로 사용되는 쿼리를
+    처리할 수 있습니다. Java로 비유하자면, 변수로 선언해 두고 필요한 상황에 호출해서 사용하는 개념인데요.
+    저는 XML Mapper에 작성한 "postColumns"와 같이 INSERT 쿼리와 SELECT 쿼리에 주로 사용합니다.
+    각각의 쿼리에 전체 컬럼을 선언해 줘도 되지만, 해당 태그들을 이용하면 코드 라인을 줄일 수 있답니다.
+
+
+    두 태그의 포인트는 중복 제거이며, 동일한 XML Mapper뿐만 아니라, 다른 XML Mapper에 선언된 SQL
+    조각도 인클루드(Include) 할 수 있습니다.
+
+    3. parameterType
+
+    SQL 쿼리 실행에 필요한 파라미터의 타입을 의미합니다. 단일(하나의) 파라미터가 아닌 경우에는 일반적으로
+    객체를 전달받아 쿼리를 실행합니다.
+
+    3. resultType
+
+    SQL 쿼리의 실행 결과를 매핑할 결과 타입을 의미합니다. Mapper 인터페이스에 선언한 메서드의 리턴
+    타입과 동일한 타입으로 선언해 주시면 됩니다.
+
+
+    4. #{ } 표현식
+
+    MyBatis는 #{ 변수명 } 표현식을 이용해서 전달받은 파라미터를 기준으로 쿼리를 실행합니다.
+
+-->
+</mapper>
