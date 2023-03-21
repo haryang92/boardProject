@@ -18,8 +18,8 @@
 
 
     <!-- 게시글 저장 -->
-    <insert id="save" parameterType="com.example.Board.domain.post.PostRequest">
-        INSERT INTO board (
+    <insert id="save" parameterType="com.example.Board.domain.post.PostRequest" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hello.board (
         <include refid="postColumns" />
         ) VALUES (
         #{id}
@@ -33,7 +33,12 @@
         , NULL
         )
     </insert>
-
+<!--
+useGeneratedKeys
+useGeneratedKeys 옵션을 true로 설정하면, INSERT 된 게시글의 PK가 객체에 저장되는데요.
+여기서 객체는 파라미터 타입으로 선언한 PostRequest 타입의 객체인 params를 의미하며,
+keyProperty 속성에 선언한 id, 즉 params의 id에 생성된 PK 값이 담기게 됩니다.
+-->
 
     <!-- 게시글 상세정보 조회 -->
     <select id="findById" parameterType="long" resultType="com.example.Board.domain.post.PostResponse">
