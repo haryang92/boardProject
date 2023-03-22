@@ -1,10 +1,12 @@
 package com.example.Board.domain.controller;
 
+import com.example.Board.domain.post.PostResponse;
 import com.example.Board.domain.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -13,8 +15,31 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 작성 페이지
-    @GetMapping(value = "post/write.do")
-    public String postWrite(Model model) {
+//    @GetMapping(value = "post/write.do")
+//    public String postWrite(Model model) {
+//        return "post/write";
+//    }
+
+//    @GetMapping("/post/write.do")
+//    public String openPostWrite(Model model) {
+//        String title = "제목";
+//        String content = "내용";
+//        String writer = "tester";
+//
+//        model.addAttribute("t", title);
+//        model.addAttribute("c", content);
+//        model.addAttribute("w", writer);
+//
+//        return "post/write";
+//    }
+
+    // 게시글 작성 페이지
+    @GetMapping("/post/write.do")
+    public String openPostWrite(@RequestParam(value = "id", required = false) final Long id, Model model) {
+        if (id != null) {
+            PostResponse post = postService.findPostById(id);
+            model.addAttribute("post", post);
+        }
         return "post/write";
     }
 
@@ -45,5 +70,25 @@ public class PostController {
      * Model
      * 메서드의 파라미터로 선언된 Model 인터페이스는 데이터를 뷰(HTML)로 전달하는 데 사용됩니다.
      * 화면(HTML)을 처리하는 과정에서 자세히 알아보도록 하겠습니다.
+     *
+     * model.addAttribute( )
+     * 해당 메서드를 이용해서 화면(HTML)으로 데이터를 전달할 수 있습니다.
+     * 메서드의 인자로는 이름(String name), 값(Object value)을 전달하는데요,
+     * 웬만해서는 이름(name)과 값(value)을 동일하게 지정합니다.
+     * HTML에서는 ${ } 표현식을 이용해서 전달받은 데이터에 접근할 수 있습니다.
+     *
+     *@RequestParam
+     * 뷰(화면)에서 보낸 파라미터를 전달받는 데 사용됩니다.
+     * 예를 들어, 신규 게시글을 등록하는 경우에 게시글 번호(id)는 null로 전송됩니다.
+     * 하지만, 기존 게시글을 수정하는 경우에는 컨트롤러로 게시글 번호(idx)가 파라미터로 전송되고,
+     * 전달받은 게시글 번호(id)를 이용하여 게시글을 조회하여 뷰로 전달합니다.
+     * 새로운 게시글을 등록하는 경우에는 게시글 번호(idx)가 필요하지 않기 때문에
+     * required 속성을 false로 지정합니다.
+     * 필수(required) 속성은 default 값이 true이며, required 속성을 false로 지정하지 않으면
+     * id를 파라미터로 전달받지 못했을 때 예외가 발생합니다.
+     *
+     * 전체 로직
+     * 게시글 번호(id)를 파라미터로 전달받은 경우, 즉 기존 게시글을 수정하는 경우에는
+     * id를 이용하여 조회한 게시글 응답 객체를 post라는 이름으로 뷰(View)로 전달합니다.
      */
 }

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layout/basic">
+<th:block layout:fragment="title">
+  <title>글작성 페이지</title>
+</th:block>
+</html>
+
+<!--
+xmlns:th
+타임리프의 th 속성을 사용하기 위한 선언입니다.
+
+xmlns:layout
+타임리프의 레이아웃 기능을 사용하기 위한 선언입니다.
+
+xmlnslayout:decorator
+레이아웃으로 basic.html을 사용하겠다는 의미입니다.
+
+th:block layout:fragment
+header.html을 작성하는 과정에서 이야기했듯이
+layout:fragment 속성에 이름을 지정해서
+실제 Content 페이지의 내용을 채우게 됩니다.
+예를 들어, 글쓰기 페이지는 "write page"로,
+게시글 리스트 페이지는 "list page"로,
+즉, 페이지마다 타이틀을 다르게 처리하고 싶을 때
+해당 속성을 이용해서 타이틀을 동적(Dynamic)으로 처리할 수 있습니다.
+
+-->
