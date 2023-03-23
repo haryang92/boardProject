@@ -1,12 +1,16 @@
 package com.example.Board.domain.controller;
 
+import com.example.Board.domain.post.PostRequest;
 import com.example.Board.domain.post.PostResponse;
 import com.example.Board.domain.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,6 +45,29 @@ public class PostController {
             model.addAttribute("post", post);
         }
         return "post/write";
+    }
+
+    // 신규 게시글 생성
+    @PostMapping("/post/save.do")
+    public String savePost(final PostRequest params) {
+        postService.savePost(params);
+        return "redirect:/post/list.do";
+    }
+
+    // 게시글 리스트 페이지
+    @GetMapping("/post/list.do")
+    public String openPostList(Model model) {
+        List<PostResponse> posts = postService.findAllPost();
+        model.addAttribute("posts", posts);
+        return "post/list";
+    }
+
+    // 게시글 상세 페이지
+    @GetMapping("/post/view.do")
+    public String openPostView(@RequestParam final Long id, Model model) {
+        PostResponse post = postService.findPostById(id);
+        model.addAttribute("post", post);
+        return "post/view";
     }
 
     /**
@@ -90,5 +117,11 @@ public class PostController {
      * 전체 로직
      * 게시글 번호(id)를 파라미터로 전달받은 경우, 즉 기존 게시글을 수정하는 경우에는
      * id를 이용하여 조회한 게시글 응답 객체를 post라는 이름으로 뷰(View)로 전달합니다.
+     *
+     * params
+     *폼 데이터를 컨트롤러 메서드의 파라미터로 전송합니다.
+     * PostRequest의 멤버 변수명과 사용자 입력 필드의 "name" 값이 동일하면
+     * PostRequest 타입의 객체인 params의 각 멤버 변수에 "name" 값을 통해 전달된 value가 매핑됩니다
+     *
      */
 }
