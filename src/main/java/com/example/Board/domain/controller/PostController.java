@@ -70,6 +70,20 @@ public class PostController {
         return "post/view";
     }
 
+    // 기존 게시글 수정
+    @PostMapping("/post/update.do")
+    public String updatePost(final PostRequest params) {
+        postService.updatePost(params);
+        return "redirect:/post/list.do";
+    }
+
+    // 게시글 삭제
+    @PostMapping("/post/delete.do")
+    public String deletePost(@RequestParam final Long id) {
+        postService.deletePost(id);
+        return "redirect:/post/list.do";
+    }
+
     /**
      * @Controller
      * 해당 클래스가 사용자의 요청과 응답을 처리하는, 즉 UI를 담당하는 컨트롤러 클래스임을 의미합니다.
