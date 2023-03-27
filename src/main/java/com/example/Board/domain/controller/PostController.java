@@ -1,16 +1,22 @@
 package com.example.Board.domain.controller;
 
+import com.example.Board.domain.dto.MessageDTO;
 import com.example.Board.domain.post.PostRequest;
 import com.example.Board.domain.post.PostResponse;
 import com.example.Board.domain.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.bridge.Message;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,6 +43,12 @@ public class PostController {
 //        return "post/write";
 //    }
 
+    // 사용자에게 메시지를 전달하고, 페이지를 리다이렉트 한다.
+    private String showMessageAndRedirect(final MessageDTO params, Model model) {
+        model.addAttribute("params", params);
+        return "common/messageRedirect";
+    }
+
     // 게시글 작성 페이지
     @GetMapping("/post/write.do")
     public String openPostWrite(@RequestParam(value = "id", required = false) final Long id, Model model) {
@@ -49,9 +61,11 @@ public class PostController {
 
     // 신규 게시글 생성
     @PostMapping("/post/save.do")
-    public String savePost(final PostRequest params) {
+    public String savePost(final PostRequest params, Model model) {
         postService.savePost(params);
-        return "redirect:/post/list.do";
+//        return "redirect:/post/list.do";
+        MessageDTO message = new MessageDTO("게시글 생성이 완료되었습니다.", "/post/list.do", RequestMethod.GET, null);
+        return showMessageAndRedirect(message, model);
     }
 
     // 게시글 리스트 페이지
@@ -72,16 +86,34 @@ public class PostController {
 
     // 기존 게시글 수정
     @PostMapping("/post/update.do")
-    public String updatePost(final PostRequest params) {
+    public String updatePost(final PostRequest params, Model model) {
         postService.updatePost(params);
-        return "redirect:/post/list.do";
+//        return "redirect:/post/list.do";
+        MessageDTO message = new MessageDTO("게시글 수정이 완료되었습니다.", "/post/list.do", RequestMethod.GET, null);
+        return showMessageAndRedirect(message, model);
     }
 
     // 게시글 삭제
     @PostMapping("/post/delete.do")
-    public String deletePost(@RequestParam final Long id) {
+    public String deletePost(@RequestParam final Long id, Model model) {
         postService.deletePost(id);
-        return "redirect:/post/list.do";
+//        return "redirect:/post/list.do";
+        MessageDTO message = new MessageDTO("게시글 삭제가 완료되었습니다.", "/post/list.do", RequestMethod.GET, null);
+        return showMessageAndRedirect(message, model);
+    }
+
+    // 1-10까지
+    public void test() {
+        List<Integer> list = new ArrayList<>();
+        for(int i= 1; i<=10; i++) {
+            list.add(i);
+        }
+
+        List<Integer> list2 = IntStream.of(1,2,3,4,5).boxed().toList();
+
+        List<Integer> list3 = IntStream.range(0,10).boxed().toList();
+
+
     }
 
     /**
